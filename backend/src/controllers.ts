@@ -111,7 +111,6 @@ async function signIn(req: Request, res: Response) {
 async function addContent(req: Request, res: Response) {
   // @ts-ignore
   const user = req.user;
-
   console.log(user);
 
   res.status(200).json({
@@ -119,4 +118,20 @@ async function addContent(req: Request, res: Response) {
   });
 }
 
-export { signUp, signIn, addContent };
+async function getAllContent(req: Request, res: Response) {}
+
+async function deleteContent(req: Request, res: Response) {}
+
+async function createLink(req: Request, res: Response) {}
+
+async function fetchLink(req: Request, res: Response) {}
+
+export {
+  signUp,
+  signIn,
+  addContent,
+  getAllContent,
+  deleteContent,
+  createLink,
+  fetchLink,
+};

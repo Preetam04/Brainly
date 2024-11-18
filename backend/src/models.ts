@@ -1,6 +1,7 @@
-import mongoose, { Schema, Document } from "mongoose";
+import mongoose, { Schema, Document, Types } from "mongoose";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import { string } from "zod";
 
 interface IUserSchema extends Document {
   username: string;
@@ -59,3 +60,109 @@ userSchema.methods.generateJWTToken = async function () {
 
 export const User =
   mongoose.models.User || mongoose.model<IUserSchema>("User", userSchema);
+
+interface IContentSchema extends Document {
+  contentType: "image" | "video" | "article" | "audio";
+  link: string;
+  title: string;
+  tags: ITagSchema[];
+  userId: IUserSchema;
+}
+
+const contentTypes = ["image", "video", "article", "audio"];
+
+const contentSchema = new Schema<IContentSchema>(
+  {
+    contentType: {
+      type: String,
+      enum: contentTypes,
+      required: true,
+    },
+    link: {
+      type: String,
+      required: true,
+    },
+    title: {
+      type: String,
+      required: true,
+    },
+    userId: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+      validate: async (value: Types.ObjectId) => {
+        const user = await User.findById(value);
+        if (!user) {
+          throw new Error("User doesn't exists");
+        }
+      },
+      required: true,
+    },
+
+    tags: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "Tag",
+      },
+    ],
+  },
+  {
+    timestamps: true,
+  }
+);
+
+contentSchema.pre("save", async function (next) {
+  const user = await User.findById(this.userId);
+  if (!user) {
+    throw new Error("User doesn't exists");
+  }
+  next();
+});
+
+export const Content =
+  mongoose.models.Content || mongoose.model("Content", contentSchema);
+
+interface ITagSchema extends Document {
+  tag: string;
+}
+
+const tagsSchema = new Schema<ITagSchema>({
+  tag: {
+    type: String,
+    required: true,
+  },
+});
+
+export const Tag = mongoose.models.Tag || mongoose.model("Tag", tagsSchema);
+
+interface ILinkSchema extends Document {
+  hash: string;
+  userId: IUserSchema;
+}
+
+const linkSchema = new Schema<ILinkSchema>({
+  hash: {
+    type: String,
+    required: true,
+  },
+  userId: {
+    type: Types.ObjectId,
+    ref: "User",
+    required: true,
+    validate: async (value: Types.ObjectId) => {
+      const user = await User.findById(value);
+      if (!user) {
+        throw new Error("User doesn't exists");
+      }
+    },
+  },
+});
+
+linkSchema.pre("save", async function (next) {
+  const user = await User.findById(this.userId);
+  if (!user) {
+    throw new Error("User doesn't exists");
+  }
+  next();
+});
+
+export const Link = mongoose.models.Link || mongoose.model("Link", linkSchema);
