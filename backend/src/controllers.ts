@@ -3,15 +3,14 @@ import { Content, Tag, User } from "./models";
 import mongoose, { Error, Schema } from "mongoose";
 import { contentValidationSchema, userValidationSchema } from "./lib";
 
-async function signUp(req: Request, res: Response) {
+async function signUp(req: Request, res: Response): Promise<any> {
   const data = userValidationSchema.safeParse(req.body);
 
   if (data.error) {
-    res.status(411).json({
+    return res.status(411).json({
       message: data.error.errors.map((err) => err.message).join(" & "),
       status: 411,
     });
-    return;
   }
 
   try {
@@ -22,11 +21,10 @@ async function signUp(req: Request, res: Response) {
     });
 
     if (isUserPresent) {
-      res.status(403).json({
+      return res.status(403).json({
         message: "User already exists with username",
         status: 403,
       });
-      return;
     }
 
     const newUser = await User.create({
@@ -35,36 +33,32 @@ async function signUp(req: Request, res: Response) {
     });
 
     if (!newUser) {
-      res.status(404).json({
+      return res.status(404).json({
         message: "Error creating User",
         status: 404,
       });
-      return;
     }
 
-    res.status(200).json({
+    return res.status(200).json({
       message: "User signed up successfully",
       status: 200,
     });
-    return;
   } catch (error) {
-    res.status(500).json({
+    return res.status(500).json({
       message: "Something went wrong",
       status: 500,
     });
-    return;
   }
 }
 
-async function signIn(req: Request, res: Response) {
+async function signIn(req: Request, res: Response): Promise<any> {
   const data = userValidationSchema.safeParse(req.body);
 
   if (data.error) {
-    res.status(411).json({
+    return res.status(411).json({
       message: data.error.errors.map((err) => err.message).join(" & "),
       status: 411,
     });
-    return;
   }
 
   try {
@@ -75,44 +69,41 @@ async function signIn(req: Request, res: Response) {
     });
 
     if (!userExists) {
-      res.status(403).json({
+      return res.status(403).json({
         message: "User doesn't exists with this username",
         status: 403,
       });
-      return;
     }
 
     const passwordCorrect = await userExists.isPasswordCorrect(password);
 
     if (!passwordCorrect) {
-      res.status(401).json({
+      return res.status(401).json({
         message: "Password is Incorrect",
         status: 401,
       });
-      return;
     }
 
     const token = await userExists.generateJWTToken();
 
-    res.status(201).json({
+    return res.status(201).json({
       message: "User Signed Up Successfully",
       token,
       status: 201,
     });
   } catch (error) {
-    res.status(500).json({
+    return res.status(500).json({
       message: "Something went wrong",
       status: 500,
     });
-    return;
   }
 }
 
-async function addContent(req: Request, res: Response) {
+async function addContent(req: Request, res: Response): Promise<any> {
   const data = contentValidationSchema.safeParse(req.body);
 
   if (data.error) {
-    res.status(411).json({
+    return res.status(411).json({
       message: data.error.errors.map((err) => err.message).join(" & "),
       status: 411,
     });
@@ -145,13 +136,13 @@ async function addContent(req: Request, res: Response) {
       });
 
       if (!addedContent) {
-        res.status(404).json({
+        return res.status(404).json({
           message: "Error adding content",
           status: 404,
         });
       }
 
-      res.status(201).json({
+      return res.status(201).json({
         message: "Content added successfully",
         content: addedContent,
         status: 201,
@@ -165,13 +156,13 @@ async function addContent(req: Request, res: Response) {
       });
 
       if (!addedContent) {
-        res.status(404).json({
+        return res.status(404).json({
           message: "Error adding content",
           status: 404,
         });
       }
 
-      res.status(201).json({
+      return res.status(201).json({
         message: "Content added successfully",
         content: addedContent,
         status: 201,
@@ -179,11 +170,13 @@ async function addContent(req: Request, res: Response) {
     }
   } catch (error) {
     console.log(error);
-    res.status(501).json({ message: "Something went wrong", status: 501 });
+    return res
+      .status(501)
+      .json({ message: "Something went wrong", status: 501 });
   }
 }
 
-async function getAllContent(req: Request, res: Response) {
+async function getAllContent(req: Request, res: Response): Promise<any> {
   // @ts-ignore
   const user = req.user;
 
@@ -193,57 +186,67 @@ async function getAllContent(req: Request, res: Response) {
     });
 
     if (!allContent) {
-      res.status(403).json({
+      return res.status(403).json({
         message: "User don't have any content",
         status: 403,
       });
       return;
     }
 
-    res.status(200).json({
+    return res.status(200).json({
       message: "User's content fetched successfully",
       allContent,
       status: 200,
     });
   } catch (error) {
     console.log(error);
-    res.status(501).json({ message: "Something went wrong", status: 501 });
+    return res
+      .status(501)
+      .json({ message: "Something went wrong", status: 501 });
   }
 }
 
-async function deleteContent(req: Request, res: Response) {
+async function deleteContent(req: Request, res: Response): Promise<any> {
   const { contentId } = req.body;
   // @ts-ignore
   const user = req.user;
 
   if (!contentId) {
-    res.status(411).json({ message: "contentId is required" });
-    return;
+    return res.status(411).json({ message: "contentId is required" });
   }
 
   try {
-    const content = await Content.find({
-      _id: contentId,
-      userId: user._id,
-    });
+    const content = await Content.findById(contentId);
+
+    if (!content) {
+      return res.status(403).json({
+        message: "Content doesn't Exists",
+        status: 403,
+      });
+    }
+
+    // console.log(content?.userId.equals(user._id));
+    // console.log(content?.userId, user._id);
 
     // @ts-ignore
-    if (content && content.length === 0) {
-      res.status(403).json({
-        message: " Trying to delete a doc you don’t own",
+    if (!content || !content?.userId.equals(user._id)) {
+      return res.status(403).json({
+        message: "Trying to delete a doc you don’t own",
         status: 403,
       });
     }
 
     await Content.findByIdAndDelete(contentId);
 
-    res.status(200).json({
+    return res.status(200).json({
       message: "content deleted",
       status: 200,
     });
   } catch (error) {
     console.log(error);
-    res.status(501).json({ message: "Something went wrong", status: 501 });
+    return res
+      .status(501)
+      .json({ message: "Something went wrong", status: 501 });
   }
 }
 
