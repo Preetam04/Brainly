@@ -1,7 +1,7 @@
-import mongoose, { Schema, Document, Types } from "mongoose";
+import mongoose, { Schema, Document, Types, Error } from "mongoose";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import { string } from "zod";
+import { any, string } from "zod";
 
 interface IUserSchema extends Document {
   username: string;
@@ -61,15 +61,15 @@ userSchema.methods.generateJWTToken = async function () {
 export const User =
   mongoose.models.User || mongoose.model<IUserSchema>("User", userSchema);
 
-interface IContentSchema extends Document {
-  contentType: "image" | "video" | "article" | "audio";
+export interface IContentSchema extends Document {
+  contentType: "tweet" | "document" | "youtube" | "link";
   link: string;
   title: string;
   tags: ITagSchema[];
   userId: IUserSchema;
 }
 
-const contentTypes = ["image", "video", "article", "audio"];
+const contentTypes = ["tweet", "document", "youtube", "link"];
 
 const contentSchema = new Schema<IContentSchema>(
   {
