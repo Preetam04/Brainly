@@ -10,7 +10,7 @@ interface FormFieldProps {
   placeholder: string;
 }
 
-const Inputfied: React.FC<FormFieldProps> = ({
+const InputField: React.FC<FormFieldProps> = ({
   label,
   name,
   register,
@@ -40,4 +40,4 @@ const Inputfied: React.FC<FormFieldProps> = ({
   );
 };
 
-export default Inputfied;
+export default InputField;

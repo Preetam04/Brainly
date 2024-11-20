@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
 import { z } from "zod";
 import Button from "../../components/Button";
-import Inputfied from "../../components/inputfied";
+import InputField from "../../components/inputfied";
 import Logo from "../../components/Logo";
 import { userSchema } from "../../lib";
 
@@ -32,14 +32,14 @@ const SignUp = () => {
           onSubmit={handleSubmit(onSubmit)}
           className="w-full space-y-4 h-full"
         >
-          <Inputfied
+          <InputField
             label="Username"
             name="username"
             register={register}
             error={errors.username}
             placeholder="Tyler Durden"
           />
-          <Inputfied
+          <InputField
             label="Password"
             name="password"
             register={register}

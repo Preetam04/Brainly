@@ -1,7 +1,8 @@
 import { Request, Response } from "express";
-import { Content, Tag, User } from "./models";
+import { Content, Link, Tag, User } from "./models";
 import mongoose, { Error, Schema } from "mongoose";
 import { contentValidationSchema, userValidationSchema } from "./lib";
+import crypto from "crypto";
 
 async function signUp(req: Request, res: Response): Promise<any> {
   const data = userValidationSchema.safeParse(req.body);
@@ -250,9 +251,89 @@ async function deleteContent(req: Request, res: Response): Promise<any> {
   }
 }
 
-async function createLink(req: Request, res: Response) {}
+async function createLink(req: Request, res: Response): Promise<any> {
+  try {
+    // @ts-ignore
+    const user = req.user;
 
-async function fetchLink(req: Request, res: Response) {}
+    const userExists = await Link.findOne({
+      userId: user._id,
+    });
+
+    if (userExists) {
+      return res.status(200).json({
+        message: "Hash for the new tab",
+        // @ts-ignore
+        hash: userExists.hash,
+        status: 200,
+      });
+    }
+
+    const hash = crypto
+      .createHash("md5")
+      .update(JSON.stringify(user._id))
+      .digest("hex")
+      .substring(0, 8);
+
+    const createdLink = await Link.create({
+      hash: hash,
+      userId: user._id,
+    });
+
+    return res.status(200).json({
+      message: "Hash for the new tab",
+      hash: createdLink.hash,
+      status: 200,
+    });
+  } catch (error) {
+    return res
+      .status(501)
+      .json({ message: "Something went wrong", status: 501 });
+  }
+}
+
+async function fetchLink(req: Request, res: Response): Promise<any> {
+  try {
+    const { shareLink } = req.params;
+    console.log(shareLink);
+
+    const hashUser = await Link.findOne({
+      hash: shareLink,
+    });
+
+    if (!hashUser) {
+      return res.status(404).json({
+        message: "No content for this user",
+        status: 404,
+      });
+    }
+
+    console.log(hashUser.userId);
+
+    const { userId } = hashUser;
+
+    const allContent = await Content.find({
+      userId: userId,
+    });
+
+    if (allContent.length === 0) {
+      return res.status(200).json({
+        message: "User don't have any content",
+        status: 200,
+      });
+    }
+
+    return res.status(200).json({
+      message: "User content fetched successfully",
+      allContent: allContent,
+      status: 200,
+    });
+  } catch (error) {
+    return res
+      .status(501)
+      .json({ message: "Something went wrong", status: 501 });
+  }
+}
 
 export {
   signUp,

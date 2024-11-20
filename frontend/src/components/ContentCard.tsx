@@ -10,6 +10,8 @@ import {
   Youtube,
 } from "lucide-react";
 import React from "react";
+import Button from "./Button";
+import { useNavigate } from "react-router-dom";
 
 export interface CardProps {
   contentType: "tweet" | "document" | "youtube" | "link";
@@ -17,6 +19,7 @@ export interface CardProps {
   title: "Elon Musk on AI Innovation";
   tags: ["AI", "Technology"];
   userId: "user_001";
+  onDelete: (_id: string) => void;
 }
 
 const ContentCard: React.FC<CardProps> = ({
@@ -25,6 +28,7 @@ const ContentCard: React.FC<CardProps> = ({
   tags,
   title,
   userId,
+  onDelete,
 }) => {
   const iconType = {
     youtube: <Youtube size={20} className="text-gray-800" />,
@@ -36,11 +40,21 @@ const ContentCard: React.FC<CardProps> = ({
   const dataToday = new Date();
 
   return (
-    // TODO: Add a open button
     <div className="w-full ring-1 ring-gray-300  p-4 rounded-md shadow relative h-fit ">
       <div className="text-gray-500 flex items-center gap-3 absolute right-4 top-4">
-        <Share2 size={16} className="hover:text-primary cursor-pointer" />
-        <Trash2 size={16} className="hover:text-red-700 cursor-pointer" />
+        <a href={link} target="_blank">
+          <Share2
+            size={16}
+            className=" hover:text-primary cursor-pointer hover:bg-primary/25 p-1 w-fit h-fit rounded-md"
+          />
+        </a>
+        <Trash2
+          size={16}
+          onClick={() => {
+            onDelete(title);
+          }}
+          className="hover:text-red-700 cursor-pointer hover:bg-red-700/25 p-1 w-fit h-fit rounded-md"
+        />
       </div>
       <div className=" flex items-start gap-2 mt-2 h-9">
         {iconType[contentType]}
@@ -54,6 +68,7 @@ const ContentCard: React.FC<CardProps> = ({
         fuga est nihil? Molestias vel perferendis sapiente fugiat dolore
         assumenda. In.
       </div>
+
       <div className="flex gap-2 mt-4">
         {tags.map((tag, key) => (
           <div

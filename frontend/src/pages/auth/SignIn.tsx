@@ -4,8 +4,8 @@ import { Link } from "react-router-dom";
 import { z } from "zod";
 import Button from "../../components/Button";
 import Logo from "../../components/Logo";
-import Inputfied from "../../components/inputfied";
 import { userSchema } from "../../lib";
+import InputField from "../../components/inputfied";
 
 type UserForm = z.infer<typeof userSchema>;
 const SignIn = () => {
@@ -31,14 +31,14 @@ const SignIn = () => {
           onSubmit={handleSubmit(onSubmit)}
           className="w-full space-y-4 h-full"
         >
-          <Inputfied
+          <InputField
             label="Username"
             name="username"
             register={register}
             error={errors.username}
             placeholder="Tyler Durden"
           />
-          <Inputfied
+          <InputField
             label="Password"
             name="password"
             register={register}

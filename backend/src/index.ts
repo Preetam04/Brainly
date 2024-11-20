@@ -29,8 +29,8 @@ app.post("/api/v1/content", verifyJWT, addContent);
 app.get("/api/v1/content", verifyJWT, getAllContent);
 app.delete("/api/v1/content", verifyJWT, deleteContent);
 
-app.post("/api/v1/brain/share", verifyJWT, createLink);
-app.get("/api/v1/brain/share/:shareLink", verifyJWT, fetchLink);
+app.get("/api/v1/brain/share", verifyJWT, createLink);
+app.get("/api/v1/brain/share/:shareLink", fetchLink);
 
 app.listen(process.env.PORT, async () => {
   try {
