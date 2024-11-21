@@ -88,7 +88,7 @@ async function signIn(req: Request, res: Response): Promise<any> {
     const token = await userExists.generateJWTToken();
 
     return res.status(201).json({
-      message: "User Signed Up Successfully",
+      message: "User Signed In Successfully",
       token,
       status: 201,
     });
@@ -232,19 +232,18 @@ async function getAllContent(req: Request, res: Response): Promise<any> {
   try {
     const allContent = await Content.find({
       userId: user._id,
-    });
+    }).populate("tags");
 
     if (!allContent) {
       return res.status(403).json({
         message: "User don't have any content",
         status: 403,
       });
-      return;
     }
 
     return res.status(200).json({
       message: "User's content fetched successfully",
-      allContent,
+      data: allContent,
       status: 200,
     });
   } catch (error) {

@@ -11,10 +11,11 @@ import SharedBrain from "./pages/SharedBrain";
 import HomeLayout from "./layouts/HomeLayout";
 import AuthLayout from "./layouts/AuthLayout";
 import LandingPage from "./pages/LandingPage";
+import BaseLayout from "./layouts/BaseLayout";
 
 const routes = createBrowserRouter(
   createRoutesFromElements(
-    <Route path="/">
+    <Route path="/" element={<BaseLayout />}>
       <Route element={<PrivateRoutes />}>
         <Route element={<HomeLayout />} path="u">
           <Route path="" element={<Home />} />

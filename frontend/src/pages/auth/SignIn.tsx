@@ -1,11 +1,14 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { z } from "zod";
 import Button from "../../components/Button";
 import Logo from "../../components/Logo";
 import { userSchema } from "../../lib";
 import InputField from "../../components/inputfied";
+import { useState } from "react";
+import { toast } from "react-toastify";
+import { signIn } from "../../services/authServices";
 
 type UserForm = z.infer<typeof userSchema>;
 const SignIn = () => {
@@ -17,10 +20,26 @@ const SignIn = () => {
     resolver: zodResolver(userSchema),
   });
 
-  const onSubmit = async () => {
-    console.log("Helloasdas");
-  };
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
+  const onSubmit = async (values: z.infer<typeof userSchema>) => {
+    setLoading(true);
+    try {
+      const response = await signIn(values);
+      // console.log(response.data);
+
+      toast.success(response?.data?.message);
+      localStorage.setItem("brainly-token", response.data.token);
+      navigate("/u");
+    } catch (error) {
+      toast.error(
+        error?.response?.data?.message || "Error occured while siging up"
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
   return (
     <div className="w-full h-screen flex   ">
       <div className="w-7/12 h-screen bg-primary bg-pattern2 opacity-50 " />
@@ -50,7 +69,12 @@ const SignIn = () => {
             placeholder="Password"
             type="password"
           />
-          <Button text="Sign Up" type="default" onClick={onSubmit} />
+          <Button
+            text="Sign In"
+            type="default"
+            action="submit"
+            loading={loading}
+          />
         </form>
         <p className="text-sm mt-4 font-medium">
           Don't have a second brain?{" "}

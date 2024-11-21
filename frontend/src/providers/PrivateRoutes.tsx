@@ -1,9 +1,11 @@
+import { useEffect, useState } from "react";
 import { Navigate, Outlet } from "react-router-dom";
 
 const PrivateRoutes = () => {
-  const auth = true;
+  const token = localStorage.getItem("brainly-token");
+  const authenticated = token && token.length !== 0;
 
-  return auth ? <Outlet /> : <Navigate to={"/auth/sign"} />;
+  return authenticated ? <Outlet /> : <Navigate to={"/sign-in"} />;
 };
 
 export default PrivateRoutes;

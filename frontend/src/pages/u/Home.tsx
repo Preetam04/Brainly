@@ -2,13 +2,15 @@ import React, { useState } from "react";
 import Logo from "../../components/Logo";
 import Navbar from "../../components/Navbar";
 import Button from "../../components/Button";
-import { Plus, Share, Share2, X } from "lucide-react";
+import { LoaderCircle, Plus, Share, Share2, X } from "lucide-react";
 import ContentCard, { CardProps } from "../../components/ContentCard";
 import Inputfied from "../../components/inputfied";
 import InputField from "../../components/inputfied";
 import ShareCard from "../../components/ShareCard";
 import AddContentCard from "../../components/AddContentCard";
 import SliderBar from "../../components/SliderBar";
+import { getUserData } from "../../services/userServices";
+import useFetch from "../../hooks/useFetch";
 
 const dummyData: CardProps[] = [
   {
@@ -52,68 +54,82 @@ const Home = () => {
   const [addContentTabVisible, setAddContentTabVisible] =
     useState<boolean>(false);
   const [shareCardOpen, setShareCardOpen] = useState<boolean>(false);
+
+  const { data, error, loading } = useFetch(async () => {
+    return await getUserData();
+  });
+
+  console.log(error);
+
   const [filter, setFilter] = useState("all");
 
   const onDelete = (id: string) => {
     console.log(id);
   };
 
-  console.log(shareCardOpen);
-
   return (
     <>
       <div className="flex items-center flex-col">
         <Navbar />
-        <div className="mt-28 container px-5">
-          <div className="flex items-start justify-between flex-col sm:flex-row w-full flex-wrap ">
-            <h1 className="text-3xl font-bold">All Notes</h1>
-            <div className=" flex gap-4">
-              <Button
-                type="outline"
-                icon={Share2}
-                onClick={() => {
-                  setShareCardOpen((prev) => !prev);
-                }}
-                text="Share your brain"
-              />
-              <Button
-                type="default"
-                icon={Plus}
-                onClick={() => {
-                  setAddContentTabVisible((prev) => !prev);
-                }}
-                text="Add content"
+        {loading && (
+          <div className="w-full flex items-center text-primary justify-center mt-24">
+            <LoaderCircle className="animate-spin " size={32} />
+          </div>
+        )}
+
+        {!loading && (
+          <div className="mt-28 container px-5">
+            <div className="flex items-start justify-between flex-col sm:flex-row w-full flex-wrap ">
+              <h1 className="text-3xl font-bold">All Notes</h1>
+              <div className=" flex gap-4">
+                <Button
+                  type="outline"
+                  icon={Share2}
+                  onClick={() => {
+                    setShareCardOpen((prev) => !prev);
+                  }}
+                  text="Share your brain"
+                />
+                <Button
+                  type="default"
+                  icon={Plus}
+                  onClick={() => {
+                    setAddContentTabVisible((prev) => !prev);
+                  }}
+                  text="Add content"
+                />
+              </div>
+            </div>
+            <div className="mt-6">
+              <SliderBar
+                setFilter={setFilter}
+                arr={["all", "tweet", "document", "youtube", "link"]}
               />
             </div>
-          </div>
-          <div className="mt-6">
-            <SliderBar
-              setFilter={setFilter}
-              arr={["all", "tweet", "document", "youtube", "link"]}
-            />
-          </div>
 
-          <div className=" grid grid-cols-1  sm:grid-cols-2 lg:grid-cols-3 gap-8 mt-10 mb-20">
-            {dummyData
-              .filter((ele) => {
-                if (filter === "all") {
-                  return ele;
-                }
-                return ele.contentType === filter;
-              })
-              .map((ele, key) => (
-                <ContentCard
-                  key={key}
-                  contentType={ele.contentType}
-                  title={ele?.title}
-                  link={ele.link}
-                  tags={ele.tags}
-                  userId={ele.userId}
-                  onDelete={onDelete}
-                />
-              ))}
+            <div className=" grid grid-cols-1  sm:grid-cols-2 lg:grid-cols-3 gap-8 mt-10 mb-20">
+              {data
+                ?.filter((ele) => {
+                  if (filter === "all") {
+                    return ele;
+                  }
+                  return ele.contentType === filter;
+                })
+                .map((ele, key) => (
+                  <ContentCard
+                    key={key}
+                    contentType={ele.contentType}
+                    title={ele?.title}
+                    link={ele.link}
+                    tags={ele.tags}
+                    userId={ele.userId}
+                    onDelete={onDelete}
+                    time={ele?.createdAt}
+                  />
+                ))}
+            </div>
           </div>
-        </div>
+        )}
       </div>
 
       {(addContentTabVisible || shareCardOpen) && (

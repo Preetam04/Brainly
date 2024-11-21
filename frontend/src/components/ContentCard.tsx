@@ -1,19 +1,13 @@
 import {
-  Delete,
-  DeleteIcon,
-  Dock,
   Edit,
   FileText,
   Link,
   Link2,
-  Share2,
   Trash2,
   Twitter,
   Youtube,
 } from "lucide-react";
 import React from "react";
-import Button from "./Button";
-import { useNavigate } from "react-router-dom";
 
 export interface CardProps {
   contentType: "tweet" | "document" | "youtube" | "link";
@@ -22,6 +16,7 @@ export interface CardProps {
   tags: ["AI", "Technology"];
   userId: "user_001";
   onDelete: (_id: string) => void;
+  time: string;
 }
 
 const ContentCard: React.FC<CardProps> = ({
@@ -31,6 +26,7 @@ const ContentCard: React.FC<CardProps> = ({
   title,
   userId,
   onDelete,
+  time,
 }) => {
   const iconType = {
     youtube: <Youtube size={20} className="text-gray-800" />,
@@ -39,11 +35,11 @@ const ContentCard: React.FC<CardProps> = ({
     link: <Link2 size={20} className="text-gray-800" />,
   };
 
-  const dataToday = new Date();
+  const dataToday = new Date(time);
 
   return (
     <div className="w-full ring-1 ring-gray-300  p-4 rounded-md shadow relative h-fit ">
-      <div className="text-gray-500 flex items-center gap-3 absolute right-4 top-4">
+      <div className="text-gray-500 flex items-center gap-3 absolute right-4 bottom-4">
         <Edit
           size={16}
           className=" hover:text-primary cursor-pointer hover:bg-primary/25 p-1 w-fit h-fit rounded-md"
@@ -62,9 +58,9 @@ const ContentCard: React.FC<CardProps> = ({
           className="hover:text-red-700 cursor-pointer hover:bg-red-700/25 p-1 w-fit h-fit rounded-md"
         />
       </div>
-      <div className=" flex items-start gap-2 mt-2 h-9">
+      <div className=" flex items-end gap-2  h-9">
         {iconType[contentType]}
-        <h3 className="text-sm font-semibold flex items-start gap-2 text-gray-500 max-w-52">
+        <h3 className="text-base font-semibold flex items-start gap-2 text-gray-500 ">
           {title}
         </h3>
       </div>
@@ -81,7 +77,7 @@ const ContentCard: React.FC<CardProps> = ({
             key={key}
             className="text-xs text-primary bg-primary/25 p-1 rounded-md px-2 font-medium lowercase"
           >
-            #{tag.split(" ").join("-")}
+            #{tag["tag"].split(" ").join("-")}
           </div>
         ))}
       </div>
