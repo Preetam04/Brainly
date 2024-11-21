@@ -23,7 +23,7 @@ const Button: React.FC<ButtonProps> = ({
 
   return (
     <button
-      className={` text-md font-medium w-full rounded-md py-2 px-4 ${btnTypes[type]} flex gap-2.5 items-center hover:scale-95 transition duration-200  min-w-fit ${classes}`}
+      className={` text-md  font-medium w-full rounded-md py-2 px-4 ${btnTypes[type]} flex gap-2.5 items-center hover:scale-95 transition justify-center duration-200  min-w-fit ${classes}`}
       onClick={onClick}
     >
       {Icon ? <Icon className="inline " size={18} /> : ""}

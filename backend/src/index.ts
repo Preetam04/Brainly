@@ -9,6 +9,7 @@ import {
   getAllContent,
   signIn,
   signUp,
+  updateContent,
 } from "./controllers";
 import { verifyJWT } from "./lib";
 import cors from "cors";
@@ -28,6 +29,7 @@ app.post("/api/v1/sign-in", signIn);
 app.post("/api/v1/content", verifyJWT, addContent);
 app.get("/api/v1/content", verifyJWT, getAllContent);
 app.delete("/api/v1/content", verifyJWT, deleteContent);
+app.patch("/api/v1/content/:contentId", verifyJWT, updateContent);
 
 app.get("/api/v1/brain/share", verifyJWT, createLink);
 app.get("/api/v1/brain/share/:shareLink", fetchLink);

@@ -2,8 +2,10 @@ import {
   Delete,
   DeleteIcon,
   Dock,
+  Edit,
   FileText,
   Link,
+  Link2,
   Share2,
   Trash2,
   Twitter,
@@ -34,7 +36,7 @@ const ContentCard: React.FC<CardProps> = ({
     youtube: <Youtube size={20} className="text-gray-800" />,
     tweet: <Twitter size={20} className="text-gray-800" />,
     document: <FileText size={20} className="text-gray-800" />,
-    link: <Link size={20} className="text-gray-800" />,
+    link: <Link2 size={20} className="text-gray-800" />,
   };
 
   const dataToday = new Date();
@@ -42,8 +44,12 @@ const ContentCard: React.FC<CardProps> = ({
   return (
     <div className="w-full ring-1 ring-gray-300  p-4 rounded-md shadow relative h-fit ">
       <div className="text-gray-500 flex items-center gap-3 absolute right-4 top-4">
+        <Edit
+          size={16}
+          className=" hover:text-primary cursor-pointer hover:bg-primary/25 p-1 w-fit h-fit rounded-md"
+        />
         <a href={link} target="_blank">
-          <Share2
+          <Link
             size={16}
             className=" hover:text-primary cursor-pointer hover:bg-primary/25 p-1 w-fit h-fit rounded-md"
           />

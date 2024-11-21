@@ -117,58 +117,106 @@ async function addContent(req: Request, res: Response): Promise<any> {
 
     const { contentType, link, title, tags } = req.body;
 
-    if (tags && tags.length !== 0) {
-      const newTags = await Promise.all(
-        tags.map(async (ele: string) => {
-          const existingTag = await Tag.findOne({ tag: ele });
-          if (existingTag) return existingTag._id;
+    const newTags = await Promise.all(
+      tags.map(async (ele: string) => {
+        const existingTag = await Tag.findOne({ tag: ele });
+        if (existingTag) return existingTag._id;
 
-          const createdTag = await Tag.create({ tag: ele });
-          return createdTag._id;
-        })
-      );
+        const createdTag = await Tag.create({ tag: ele });
+        return createdTag._id;
+      })
+    );
 
-      const addedContent = await Content.create({
-        contentType,
-        link,
-        title,
-        userId: user._id,
-        tags: newTags,
-      });
+    const addedContent = await Content.create({
+      contentType,
+      link,
+      title,
+      userId: user._id,
+      tags: newTags,
+    });
 
-      if (!addedContent) {
-        return res.status(404).json({
-          message: "Error adding content",
-          status: 404,
-        });
-      }
-
-      return res.status(201).json({
-        message: "Content added successfully",
-        content: addedContent,
-        status: 201,
-      });
-    } else {
-      const addedContent = await Content.create({
-        contentType,
-        link,
-        title,
-        userId: user._id,
-      });
-
-      if (!addedContent) {
-        return res.status(404).json({
-          message: "Error adding content",
-          status: 404,
-        });
-      }
-
-      return res.status(201).json({
-        message: "Content added successfully",
-        content: addedContent,
-        status: 201,
+    if (!addedContent) {
+      return res.status(404).json({
+        message: "Error adding content",
+        status: 404,
       });
     }
+
+    return res.status(201).json({
+      message: "Content added successfully",
+      content: addedContent,
+      status: 201,
+    });
+  } catch (error) {
+    console.log(error);
+    return res
+      .status(501)
+      .json({ message: "Something went wrong", status: 501 });
+  }
+}
+
+async function updateContent(req: Request, res: Response): Promise<any> {
+  const data = contentValidationSchema.safeParse(req.body);
+
+  if (data.error) {
+    return res.status(411).json({
+      message: data.error.errors.map((err) => err.message).join(" & "),
+      status: 411,
+    });
+  }
+
+  try {
+    // @ts-ignore
+    const user = req.user;
+    const { contentId } = req.params;
+
+    if (contentId.length !== 24) {
+      return res.status(404).json({
+        message: "Not a valid content Id",
+        status: 404,
+      });
+    }
+
+    const contentExists = await Content.findById(contentId);
+
+    if (!contentExists) {
+      return res.status(404).json({
+        message: "content with the in doesn't exists",
+        status: 404,
+      });
+    }
+
+    const { contentType, link, title, tags } = req.body;
+
+    const newTags = await Promise.all(
+      tags.map(async (ele: string) => {
+        const existingTag = await Tag.findOne({ tag: ele });
+        if (existingTag) return existingTag._id;
+
+        const createdTag = await Tag.create({ tag: ele });
+        return createdTag._id;
+      })
+    );
+
+    const updatedContent = await Content.findByIdAndUpdate(contentId, {
+      contentType,
+      link,
+      title,
+      tags: newTags,
+    });
+
+    if (!updatedContent) {
+      return res.status(404).json({
+        message: "Error updating content",
+        status: 404,
+      });
+    }
+
+    return res.status(200).json({
+      message: "Content updated successfully",
+      updateContent,
+      status: 200,
+    });
   } catch (error) {
     console.log(error);
     return res
@@ -295,7 +343,6 @@ async function createLink(req: Request, res: Response): Promise<any> {
 async function fetchLink(req: Request, res: Response): Promise<any> {
   try {
     const { shareLink } = req.params;
-    console.log(shareLink);
 
     const hashUser = await Link.findOne({
       hash: shareLink,
@@ -308,9 +355,11 @@ async function fetchLink(req: Request, res: Response): Promise<any> {
       });
     }
 
-    console.log(hashUser.userId);
+    // console.log(hashUser.userId);
 
     const { userId } = hashUser;
+
+    const user = await User.findById(userId);
 
     const allContent = await Content.find({
       userId: userId,
@@ -325,7 +374,7 @@ async function fetchLink(req: Request, res: Response): Promise<any> {
 
     return res.status(200).json({
       message: "User content fetched successfully",
-      allContent: allContent,
+      content: { user: user.username, allContent },
       status: 200,
     });
   } catch (error) {
@@ -339,6 +388,7 @@ export {
   signUp,
   signIn,
   addContent,
+  updateContent,
   getAllContent,
   deleteContent,
   createLink,

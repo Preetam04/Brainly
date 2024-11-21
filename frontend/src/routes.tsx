@@ -10,6 +10,7 @@ import SignUp from "./pages/auth/SignUp";
 import SharedBrain from "./pages/SharedBrain";
 import HomeLayout from "./layouts/HomeLayout";
 import AuthLayout from "./layouts/AuthLayout";
+import LandingPage from "./pages/LandingPage";
 
 const routes = createBrowserRouter(
   createRoutesFromElements(
@@ -25,6 +26,7 @@ const routes = createBrowserRouter(
         <Route path="sign-up" element={<SignUp />} />
       </Route>
       <Route path="shared/:hash" element={<SharedBrain />} />
+      <Route path="/" element={<LandingPage />} />
     </Route>
   )
 );

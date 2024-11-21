@@ -22,9 +22,13 @@ const SignIn = () => {
   };
 
   return (
-    <div className="w-full h-screen flex  justify-center ">
-      <div className="w-96 h-fit bg-card ring-1 rounded-md shadow-md  ring-gray-300 mt-24   py-5 px-8 mx-3 ">
-        <Logo />
+    <div className="w-full h-screen flex   ">
+      <div className="w-7/12 h-screen bg-primary bg-pattern2 opacity-50 " />
+
+      <div className="w-96 h-fit bg-card rounded-md      py-5 px-8 mx-3 self-center relative bottom-16">
+        <Link to={"/"}>
+          <Logo />
+        </Link>
         <p className="mt-2 mb-5">Access your second brain.</p>
 
         <form
