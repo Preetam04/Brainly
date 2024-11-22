@@ -7,11 +7,16 @@ import ContentCard, { CardProps } from "../../components/ContentCard";
 import Inputfied from "../../components/inputfied";
 import InputField from "../../components/inputfied";
 import ShareCard from "../../components/ShareCard";
-import AddContentCard from "../../components/AddContentCard";
+import AddContentCard, { ContentForm } from "../../components/AddContentCard";
 import SliderBar from "../../components/SliderBar";
-import { deleteContent, getUserData } from "../../services/userServices";
+import {
+  deleteContent,
+  getUserData,
+  updateContentData,
+} from "../../services/userServices";
 import useFetch from "../../hooks/useFetch";
 import { toast } from "react-toastify";
+import UpdateCard from "../../components/UpdateCard";
 
 const dummyData: CardProps[] = [
   {
@@ -54,6 +59,9 @@ const dummyData: CardProps[] = [
 const Home = () => {
   const [addContentTabVisible, setAddContentTabVisible] =
     useState<boolean>(false);
+  const [updateCardData, setUpdateCardData] = useState<ContentForm | null>(
+    null
+  );
   const [shareCardOpen, setShareCardOpen] = useState<boolean>(false);
 
   const [render, setRender] = useState(false);
@@ -75,6 +83,19 @@ const Home = () => {
     } catch (error) {
       console.log(error);
       toast.error("Can't delete content");
+    }
+  };
+
+  const onUpdate = async (data: ContentForm) => {
+    // console.log(data);
+
+    try {
+      const response = await updateContentData(data._id, data);
+      // console.log(response.data);
+      setUpdateCardData(null);
+      setRender((prev) => !prev);
+    } catch (error) {
+      console.log(error);
     }
   };
 
@@ -140,6 +161,9 @@ const Home = () => {
                       tags={ele.tags}
                       userId={ele.userId}
                       onDelete={onDelete}
+                      onEdit={() => {
+                        setUpdateCardData(ele);
+                      }}
                       time={ele?.createdAt}
                     />
                   ))}
@@ -154,7 +178,7 @@ const Home = () => {
         )}
       </div>
 
-      {(addContentTabVisible || shareCardOpen) && (
+      {(addContentTabVisible || shareCardOpen || updateCardData !== null) && (
         <div className="fixed bg-black/45  top-0 left-0 w-screen h-screen z-20  scroll flex items-center justify-center">
           {addContentTabVisible && (
             <AddContentCard
@@ -163,6 +187,13 @@ const Home = () => {
             />
           )}
           {shareCardOpen && <ShareCard setFunc={setShareCardOpen} />}
+          {updateCardData !== null && (
+            <UpdateCard
+              setFunc={setUpdateCardData}
+              onUpdate={onUpdate}
+              data={updateCardData}
+            />
+          )}
         </div>
       )}
     </>

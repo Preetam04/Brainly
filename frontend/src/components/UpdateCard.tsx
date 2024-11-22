@@ -1,18 +1,14 @@
-import { X } from "lucide-react";
-import Button from "./Button";
-import { z } from "zod";
+import React, { useState } from "react";
 import { contentValidationSchema } from "../lib";
-import { useForm } from "react-hook-form";
+import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import Button from "./Button";
 import InputField from "./inputfied";
-import { useState } from "react";
-import { toast } from "react-toastify";
-import axios from "../services/axios";
-import { addContent } from "../services/userServices";
+import { ContentForm } from "./AddContentCard";
+import { X } from "lucide-react";
 
-export type ContentForm = z.infer<typeof contentValidationSchema>;
-
-const AddContentCard = ({ setFunc, setRender }) => {
+const UpdateCard = ({ setFunc, data, onUpdate }) => {
   const {
     register,
     handleSubmit,
@@ -20,33 +16,17 @@ const AddContentCard = ({ setFunc, setRender }) => {
   } = useForm<ContentForm>({
     resolver: zodResolver(contentValidationSchema),
     defaultValues: {
-      contentType: "link", // Set the default selected value
+      title: data["title"],
+      link: data["link"],
+      contentType: data["contentType"], // Set the default selected value
+      tags: data["tags"].map((ele) => ele.tag).join(", "),
     },
   });
 
-  const [loading, setLoading] = useState(false);
-
+  const [loading, setLoading] = useState<boolean>(false);
   const onSubmit = async (values: ContentForm) => {
-    setLoading(true);
-    // console.log({ ...values, tags: values.tags?.split(", ") || [] });
-
-    try {
-      const response = await addContent({
-        ...values,
-        tags: values.tags?.split(", ") || [],
-      });
-      setFunc((prev) => !prev);
-      setRender((prev) => !prev);
-      // console.log(response.data);
-      toast.success("Content added successfully");
-    } catch (error) {
-      console.log(error);
-      toast.error("Error occured while adding content");
-    } finally {
-      setLoading(false);
-    }
+    onUpdate({ ...data, ...values, tags: values.tags?.split(", ") });
   };
-
   const contentType = ["link", "youtube", "tweet", "document"];
 
   return (
@@ -55,16 +35,12 @@ const AddContentCard = ({ setFunc, setRender }) => {
         <X
           className="text-gray-400 hover:bg-gray-200 p-0.5 w-fit h-fit rounded-md cursor-pointer"
           onClick={() => {
-            setFunc((prev: boolean) => !prev);
+            setFunc(null);
           }}
         />
       </div>
 
-      <h3 className="text-2xl font-bold">Add Content</h3>
-
-      <p className="mt-1 mb-4">
-        Add new article or video in your second brain.
-      </p>
+      <h3 className="text-2xl font-bold mb-4">Update Content</h3>
 
       <form
         onSubmit={handleSubmit(onSubmit)}
@@ -103,11 +79,6 @@ const AddContentCard = ({ setFunc, setRender }) => {
               </div>
             ))}
           </div>
-          {/* {errors && (
-            <p className="text-sm pt-1 text-red-500">
-              {errors["contentType"].message}
-            </p>
-          )} */}
         </div>
 
         <InputField
@@ -127,7 +98,7 @@ const AddContentCard = ({ setFunc, setRender }) => {
         />
 
         <Button
-          text="Add Content"
+          text="Update Content"
           type="default"
           action="submit"
           loading={loading}
@@ -137,4 +108,4 @@ const AddContentCard = ({ setFunc, setRender }) => {
   );
 };
 
-export default AddContentCard;
+export default UpdateCard;

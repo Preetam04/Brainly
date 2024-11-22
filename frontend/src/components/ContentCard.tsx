@@ -18,6 +18,7 @@ export interface CardProps {
   userId: "user_001";
   onDelete?: (_id: string) => void;
   time: string;
+  onEdit?: () => void;
 }
 
 const ContentCard: React.FC<CardProps> = ({
@@ -29,6 +30,7 @@ const ContentCard: React.FC<CardProps> = ({
   userId,
   onDelete,
   time,
+  onEdit,
 }) => {
   const iconType = {
     youtube: <Youtube size={20} className="text-gray-800" />,
@@ -48,6 +50,9 @@ const ContentCard: React.FC<CardProps> = ({
         {authenticated && (
           <Edit
             size={16}
+            onClick={() => {
+              onEdit();
+            }}
             className=" hover:text-primary cursor-pointer hover:bg-primary/25 p-1 w-fit h-fit rounded-md"
           />
         )}

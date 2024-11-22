@@ -32,7 +32,7 @@ export const contentValidationSchema = z
     (data) => {
       switch (data.contentType) {
         case "tweet":
-          return data.link.includes("twitter.com");
+          return data.link.includes("x.com");
         case "youtube":
           return data.link.includes("youtube.com");
         case "document":

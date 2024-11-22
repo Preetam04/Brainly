@@ -45,7 +45,7 @@ async function updateContentData(id, data) {
   });
 }
 async function getAllSharedData(hash: string) {
-  console.log(hash);
+  // console.log(hash);
 
   return await axios.post(`/brain/share`, {
     shareLink: hash,
@@ -57,5 +57,6 @@ export {
   deleteContent,
   getSharingLink,
   getAllSharedData,
+  updateContentData,
   addContent,
 };
