@@ -1,16 +1,17 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Logo from "../../components/Logo";
 import Navbar from "../../components/Navbar";
 import Button from "../../components/Button";
-import { LoaderCircle, Plus, Share, Share2, X } from "lucide-react";
+import { Brain, LoaderCircle, Plus, Share, Share2, X } from "lucide-react";
 import ContentCard, { CardProps } from "../../components/ContentCard";
 import Inputfied from "../../components/inputfied";
 import InputField from "../../components/inputfied";
 import ShareCard from "../../components/ShareCard";
 import AddContentCard from "../../components/AddContentCard";
 import SliderBar from "../../components/SliderBar";
-import { getUserData } from "../../services/userServices";
+import { deleteContent, getUserData } from "../../services/userServices";
 import useFetch from "../../hooks/useFetch";
+import { toast } from "react-toastify";
 
 const dummyData: CardProps[] = [
   {
@@ -55,79 +56,100 @@ const Home = () => {
     useState<boolean>(false);
   const [shareCardOpen, setShareCardOpen] = useState<boolean>(false);
 
+  const [render, setRender] = useState(false);
+
   const { data, error, loading } = useFetch(async () => {
     return await getUserData();
-  });
+  }, render);
 
-  console.log(error);
+  useEffect(() => {}, [render]);
 
   const [filter, setFilter] = useState("all");
 
-  const onDelete = (id: string) => {
-    console.log(id);
+  const onDelete = async (id: string) => {
+    try {
+      const response = await deleteContent(id);
+      // console.log(response.data.message);
+      setRender((prev) => !prev);
+      toast.success("Content removed successfully");
+    } catch (error) {
+      console.log(error);
+      toast.error("Can't delete content");
+    }
   };
 
   return (
     <>
       <div className="flex items-center flex-col">
         <Navbar />
+
+        <div className="mt-28 container px-5 ">
+          <div className="flex items-start justify-between flex-col sm:flex-row w-full flex-wrap ">
+            <h1 className="text-3xl font-bold">All Notes</h1>
+            <div className=" flex gap-4">
+              <Button
+                type="outline"
+                icon={Share2}
+                onClick={() => {
+                  setShareCardOpen((prev) => !prev);
+                }}
+                text="Share your brain"
+              />
+
+              <Button
+                type="default"
+                icon={Plus}
+                onClick={() => {
+                  setAddContentTabVisible((prev) => !prev);
+                }}
+                text="Add content"
+              />
+            </div>
+          </div>
+          <div className="mt-6">
+            <SliderBar
+              setFilter={setFilter}
+              arr={["all", "tweet", "document", "youtube", "link"]}
+            />
+          </div>
+        </div>
+
         {loading && (
           <div className="w-full flex items-center text-primary justify-center mt-24">
             <LoaderCircle className="animate-spin " size={32} />
           </div>
         )}
-
         {!loading && (
-          <div className="mt-28 container px-5">
-            <div className="flex items-start justify-between flex-col sm:flex-row w-full flex-wrap ">
-              <h1 className="text-3xl font-bold">All Notes</h1>
-              <div className=" flex gap-4">
-                <Button
-                  type="outline"
-                  icon={Share2}
-                  onClick={() => {
-                    setShareCardOpen((prev) => !prev);
-                  }}
-                  text="Share your brain"
-                />
-                <Button
-                  type="default"
-                  icon={Plus}
-                  onClick={() => {
-                    setAddContentTabVisible((prev) => !prev);
-                  }}
-                  text="Add content"
-                />
+          <div className="container px-5">
+            {!loading && data?.length !== 0 ? (
+              <div className=" grid grid-cols-1  sm:grid-cols-2 lg:grid-cols-3 gap-8 mt-10 mb-20">
+                {data
+                  ?.filter((ele) => {
+                    if (filter === "all") {
+                      return ele;
+                    }
+                    return ele.contentType === filter;
+                  })
+                  .map((ele, key) => (
+                    <ContentCard
+                      key={ele._id}
+                      id={ele._id}
+                      contentType={ele.contentType}
+                      title={ele?.title}
+                      link={ele.link}
+                      tags={ele.tags}
+                      userId={ele.userId}
+                      onDelete={onDelete}
+                      time={ele?.createdAt}
+                    />
+                  ))}
               </div>
-            </div>
-            <div className="mt-6">
-              <SliderBar
-                setFilter={setFilter}
-                arr={["all", "tweet", "document", "youtube", "link"]}
-              />
-            </div>
-
-            <div className=" grid grid-cols-1  sm:grid-cols-2 lg:grid-cols-3 gap-8 mt-10 mb-20">
-              {data
-                ?.filter((ele) => {
-                  if (filter === "all") {
-                    return ele;
-                  }
-                  return ele.contentType === filter;
-                })
-                .map((ele, key) => (
-                  <ContentCard
-                    key={key}
-                    contentType={ele.contentType}
-                    title={ele?.title}
-                    link={ele.link}
-                    tags={ele.tags}
-                    userId={ele.userId}
-                    onDelete={onDelete}
-                    time={ele?.createdAt}
-                  />
-                ))}
-            </div>
+            ) : (
+              <div className=" text-center mt-16 text-2xl font-semibold flex items-center flex-col gap-5">
+                <Brain size={56} className="text-primary" />
+                <p>Please Add data to your second brain</p>
+              </div>
+            )}
           </div>
         )}
       </div>
@@ -135,7 +157,10 @@ const Home = () => {
       {(addContentTabVisible || shareCardOpen) && (
         <div className="fixed bg-black/45  top-0 left-0 w-screen h-screen z-20  scroll flex items-center justify-center">
           {addContentTabVisible && (
-            <AddContentCard setFunc={setAddContentTabVisible} />
+            <AddContentCard
+              setRender={setRender}
+              setFunc={setAddContentTabVisible}
+            />
           )}
           {shareCardOpen && <ShareCard setFunc={setShareCardOpen} />}
         </div>

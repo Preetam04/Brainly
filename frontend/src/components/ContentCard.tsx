@@ -12,16 +12,18 @@ import React from "react";
 export interface CardProps {
   contentType: "tweet" | "document" | "youtube" | "link";
   link: string;
+  id: string;
   title: "Elon Musk on AI Innovation";
   tags: ["AI", "Technology"];
   userId: "user_001";
-  onDelete: (_id: string) => void;
+  onDelete?: (_id: string) => void;
   time: string;
 }
 
 const ContentCard: React.FC<CardProps> = ({
   contentType,
   link,
+  id,
   tags,
   title,
   userId,
@@ -37,26 +39,33 @@ const ContentCard: React.FC<CardProps> = ({
 
   const dataToday = new Date(time);
 
+  const token = localStorage.getItem("brainly-token");
+  const authenticated = token && token.length !== 0;
+
   return (
     <div className="w-full ring-1 ring-gray-300  p-4 rounded-md shadow relative h-fit ">
       <div className="text-gray-500 flex items-center gap-3 absolute right-4 bottom-4">
-        <Edit
-          size={16}
-          className=" hover:text-primary cursor-pointer hover:bg-primary/25 p-1 w-fit h-fit rounded-md"
-        />
+        {authenticated && (
+          <Edit
+            size={16}
+            className=" hover:text-primary cursor-pointer hover:bg-primary/25 p-1 w-fit h-fit rounded-md"
+          />
+        )}
         <a href={link} target="_blank">
           <Link
             size={16}
             className=" hover:text-primary cursor-pointer hover:bg-primary/25 p-1 w-fit h-fit rounded-md"
           />
         </a>
-        <Trash2
-          size={16}
-          onClick={() => {
-            onDelete(title);
-          }}
-          className="hover:text-red-700 cursor-pointer hover:bg-red-700/25 p-1 w-fit h-fit rounded-md"
-        />
+        {authenticated && (
+          <Trash2
+            size={16}
+            onClick={() => {
+              onDelete(id);
+            }}
+            className="hover:text-red-700 cursor-pointer hover:bg-red-700/25 p-1 w-fit h-fit rounded-md"
+          />
+        )}
       </div>
       <div className=" flex items-end gap-2  h-9">
         {iconType[contentType]}
@@ -77,7 +86,7 @@ const ContentCard: React.FC<CardProps> = ({
             key={key}
             className="text-xs text-primary bg-primary/25 p-1 rounded-md px-2 font-medium lowercase"
           >
-            #{tag["tag"].split(" ").join("-")}
+            #{tag["tag"]?.split(" ").join("-")}
           </div>
         ))}
       </div>

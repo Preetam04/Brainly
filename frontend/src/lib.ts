@@ -26,7 +26,7 @@ export const contentValidationSchema = z
     title: z.string({
       required_error: "Please provide a Title",
     }),
-    tags: z.array(z.string()).optional(),
+    tags: z.string().optional(),
   })
   .refine(
     (data) => {
@@ -45,5 +45,6 @@ export const contentValidationSchema = z
     },
     {
       message: "The URL does not match the specified content type.",
+      path: ["link"],
     }
   );

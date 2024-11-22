@@ -1,9 +1,33 @@
 import React, { useState } from "react";
 import Button from "./Button";
 import { Copy, Link, X } from "lucide-react";
+import { getSharingLink } from "../services/userServices";
+import { toast } from "react-toastify";
 
 const ShareCard = ({ setFunc }) => {
   const [linkAvailable, setLinkAvailable] = useState<boolean>(false);
+  const [loading, setLoading] = useState(false);
+  const [link, setLink] = useState<string>("");
+
+  const onClick = async () => {
+    setLoading(true);
+
+    try {
+      const response = await getSharingLink();
+      console.log(response.data.hash);
+      setLink(`${window.location.origin}/shared/${response.data.hash}`);
+      setLinkAvailable(true);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const copyLink = () => {
+    navigator.clipboard.writeText(link);
+    toast.info("Link copied to clipboard");
+  };
 
   return (
     <div className="w-full max-w-96 h-fit bg-background rounded-md py-5 px-6 mx-4 relative">
@@ -29,12 +53,13 @@ const ShareCard = ({ setFunc }) => {
           text={linkAvailable ? "Copy Link" : "Get Link"}
           onClick={() => {
             if (linkAvailable) {
-              console.log("copy link");
+              copyLink();
             } else {
-              console.log("get link");
+              onClick();
             }
           }}
           type="default"
+          loading={loading}
         />
       </div>
     </div>

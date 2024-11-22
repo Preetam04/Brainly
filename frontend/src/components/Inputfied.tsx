@@ -9,6 +9,7 @@ interface FormFieldProps {
   register: UseFormRegister<any>;
   error?: FieldError;
   placeholder: string;
+  required?: boolean;
 }
 
 const InputField: React.FC<FormFieldProps> = ({
@@ -18,8 +19,17 @@ const InputField: React.FC<FormFieldProps> = ({
   error,
   type,
   placeholder,
+  required = true,
 }) => {
   const [showPassword, setShowPassword] = useState(false);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    const arrayValue = value.split(",").map((tag) => tag.trim()); // Split and trim tags
+    register(name).onChange({
+      target: { name, value: arrayValue }, // Pass array to React Hook Form
+    });
+  };
 
   return (
     <div>
@@ -38,8 +48,9 @@ const InputField: React.FC<FormFieldProps> = ({
           {...register(name)}
           className="bg-gray-50 outline outline-1 outline-gray-300  text-sm rounded-lg  w-full p-2.5 focus-visible:outline-primary  "
           placeholder={placeholder}
-          required
+          required={required}
         />
+
         {type === "password" ? (
           <div
             className="absolute z-20 top-2.5 right-2 text-gray-500 cursor-pointer"

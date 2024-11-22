@@ -27,7 +27,7 @@ const Button: React.FC<ButtonProps> = ({
 
   return (
     <button
-      className={` text-md  font-medium w-full rounded-md py-2 px-4 ${btnTypes[type]} flex gap-2.5 items-center hover:scale-95 transition justify-center duration-200  min-w-fit ${classes} cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed disabled:transition-none disabled:hover:scale-100`}
+      className={` text-md  font-medium w-full rounded-md py-2 px-4 ${btnTypes[type]} flex gap-2.5 items-center hover:scale-95 transition justify-center duration-200  min-w-fit ${classes} cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed disabled:transition-none disabled:hover:scale-100 `}
       onClick={onClick}
       type={action}
       disabled={loading}

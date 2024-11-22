@@ -28,11 +28,11 @@ app.post("/api/v1/sign-in", signIn);
 // content
 app.post("/api/v1/content", verifyJWT, addContent);
 app.get("/api/v1/content", verifyJWT, getAllContent);
-app.delete("/api/v1/content", verifyJWT, deleteContent);
+app.delete("/api/v1/content/:contentId", verifyJWT, deleteContent);
 app.patch("/api/v1/content/:contentId", verifyJWT, updateContent);
 
 app.get("/api/v1/brain/share", verifyJWT, createLink);
-app.get("/api/v1/brain/share/:shareLink", fetchLink);
+app.post("/api/v1/brain/share", fetchLink);
 
 app.listen(process.env.PORT, async () => {
   try {

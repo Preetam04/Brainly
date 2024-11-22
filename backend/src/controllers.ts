@@ -119,6 +119,8 @@ async function addContent(req: Request, res: Response): Promise<any> {
 
     const newTags = await Promise.all(
       tags.map(async (ele: string) => {
+        if (ele === "") return null;
+
         const existingTag = await Tag.findOne({ tag: ele });
         if (existingTag) return existingTag._id;
 
@@ -132,7 +134,7 @@ async function addContent(req: Request, res: Response): Promise<any> {
       link,
       title,
       userId: user._id,
-      tags: newTags,
+      tags: newTags.filter((ele) => ele !== null),
     });
 
     if (!addedContent) {
@@ -255,7 +257,7 @@ async function getAllContent(req: Request, res: Response): Promise<any> {
 }
 
 async function deleteContent(req: Request, res: Response): Promise<any> {
-  const { contentId } = req.body;
+  const { contentId } = req.params;
   // @ts-ignore
   const user = req.user;
 
@@ -341,11 +343,15 @@ async function createLink(req: Request, res: Response): Promise<any> {
 
 async function fetchLink(req: Request, res: Response): Promise<any> {
   try {
-    const { shareLink } = req.params;
+    const { shareLink } = req.body;
+
+    // console.log(shareLink);
 
     const hashUser = await Link.findOne({
       hash: shareLink,
     });
+
+    // console.log(hashUser);
 
     if (!hashUser) {
       return res.status(404).json({
@@ -362,7 +368,7 @@ async function fetchLink(req: Request, res: Response): Promise<any> {
 
     const allContent = await Content.find({
       userId: userId,
-    });
+    }).populate("tags");
 
     if (allContent.length === 0) {
       return res.status(200).json({
@@ -373,7 +379,7 @@ async function fetchLink(req: Request, res: Response): Promise<any> {
 
     return res.status(200).json({
       message: "User content fetched successfully",
-      content: { user: user.username, allContent },
+      data: { user: user.username, allContent },
       status: 200,
     });
   } catch (error) {

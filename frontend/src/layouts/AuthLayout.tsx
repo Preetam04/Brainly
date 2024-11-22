@@ -1,11 +1,16 @@
 import React from "react";
-import { Outlet } from "react-router-dom";
+import { Navigate, Outlet } from "react-router-dom";
 
 const AuthLayout = () => {
-  return (
+  const token = localStorage.getItem("brainly-token");
+  const authenticated = token && token.length !== 0;
+
+  return !authenticated ? (
     <div className="h-full w-full bg-background">
       <Outlet />
     </div>
+  ) : (
+    <Navigate to={"/u"} />
   );
 };
 
