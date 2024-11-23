@@ -1,22 +1,20 @@
-import React, { useEffect, useState } from "react";
-import Logo from "../../components/Logo";
-import Navbar from "../../components/Navbar";
-import Button from "../../components/Button";
-import { Brain, LoaderCircle, Plus, Share, Share2, X } from "lucide-react";
-import ContentCard, { CardProps } from "../../components/ContentCard";
-import Inputfied from "../../components/inputfied";
-import InputField from "../../components/inputfied";
-import ShareCard from "../../components/ShareCard";
+import { Brain, LoaderCircle, Plus, Share2 } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { toast } from "react-toastify";
 import AddContentCard, { ContentForm } from "../../components/AddContentCard";
+import Button from "../../components/Button";
+import ContentCard, { CardProps } from "../../components/ContentCard";
+import Navbar from "../../components/Navbar";
+import ShareCard from "../../components/ShareCard";
 import SliderBar from "../../components/SliderBar";
+import UpdateCard from "../../components/UpdateCard";
+import useFetch from "../../hooks/useFetch";
+import useOutsideClick from "../../hooks/useOutSideClicks";
 import {
   deleteContent,
   getUserData,
   updateContentData,
 } from "../../services/userServices";
-import useFetch from "../../hooks/useFetch";
-import { toast } from "react-toastify";
-import UpdateCard from "../../components/UpdateCard";
 
 const dummyData: CardProps[] = [
   {
@@ -64,6 +62,10 @@ const Home = () => {
   );
   const [shareCardOpen, setShareCardOpen] = useState<boolean>(false);
 
+  const modalRef = useRef(null);
+  // const updateModalRef = useRef(null);
+  // const addModalRef = useRef(null);
+
   const [render, setRender] = useState(false);
 
   const { data, error, loading } = useFetch(async () => {
@@ -71,6 +73,42 @@ const Home = () => {
   }, render);
 
   useEffect(() => {}, [render]);
+
+  // useOutsideClick(
+  //   sharedModalRef,
+  //   () => {
+  //     setShareCardOpen(false);
+  //   },
+  //   "shared-btn"
+  // );
+  // useOutsideClick(
+  //   addModalRef,
+  //   () => {
+  //     setAddContentTabVisible(false);
+  //   },
+  //   "add-btn"
+  // );
+  // useOutsideClick(
+  //   updateModalRef,
+  //   () => {
+  //     setUpdateCardData(null);
+  //   },
+  //   "update-btn"
+  // );
+
+  useOutsideClick(
+    modalRef,
+    () => {
+      if (shareCardOpen) {
+        setShareCardOpen(false);
+      } else if (addContentTabVisible) {
+        setAddContentTabVisible(false);
+      } else if (updateCardData !== null) {
+        setUpdateCardData(null);
+      }
+    },
+    ["shared-btn", "add-btn", "update-btn"]
+  );
 
   const [filter, setFilter] = useState("all");
 
@@ -114,6 +152,8 @@ const Home = () => {
                 onClick={() => {
                   setShareCardOpen((prev) => !prev);
                 }}
+                // ref={sharedBtnRef}
+                id={"shared-btn"}
                 text="Share your brain"
               />
 
@@ -124,6 +164,7 @@ const Home = () => {
                   setAddContentTabVisible((prev) => !prev);
                 }}
                 text="Add content"
+                id="add-btn"
               />
             </div>
           </div>
@@ -180,20 +221,24 @@ const Home = () => {
 
       {(addContentTabVisible || shareCardOpen || updateCardData !== null) && (
         <div className="fixed bg-black/45  top-0 left-0 w-screen h-screen z-20  scroll flex items-center justify-center">
-          {addContentTabVisible && (
-            <AddContentCard
-              setRender={setRender}
-              setFunc={setAddContentTabVisible}
-            />
-          )}
-          {shareCardOpen && <ShareCard setFunc={setShareCardOpen} />}
-          {updateCardData !== null && (
-            <UpdateCard
-              setFunc={setUpdateCardData}
-              onUpdate={onUpdate}
-              data={updateCardData}
-            />
-          )}
+          <div className="" ref={modalRef}>
+            {addContentTabVisible && (
+              <AddContentCard
+                setRender={setRender}
+                setFunc={setAddContentTabVisible}
+              />
+            )}
+
+            {shareCardOpen && <ShareCard setFunc={setShareCardOpen} />}
+
+            {updateCardData !== null && (
+              <UpdateCard
+                setFunc={setUpdateCardData}
+                onUpdate={onUpdate}
+                data={updateCardData}
+              />
+            )}
+          </div>
         </div>
       )}
     </>

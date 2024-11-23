@@ -9,6 +9,7 @@ interface ButtonProps {
   classes?: string;
   action?: "submit" | "reset" | "button";
   loading?: boolean;
+  id?: string;
 }
 
 const Button: React.FC<ButtonProps> = ({
@@ -19,6 +20,7 @@ const Button: React.FC<ButtonProps> = ({
   classes,
   action,
   loading = false,
+  id,
 }) => {
   const btnTypes = {
     default: "bg-primary text-white",
@@ -31,6 +33,8 @@ const Button: React.FC<ButtonProps> = ({
       onClick={onClick}
       type={action}
       disabled={loading}
+      // ref={ref}
+      id={id}
     >
       {loading && <LoaderCircle className="animate-spin" size={18} />}
       {loading ? "" : Icon ? <Icon className="inline " size={18} /> : ""}

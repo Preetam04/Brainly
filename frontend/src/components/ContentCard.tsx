@@ -53,7 +53,7 @@ const ContentCard: React.FC<CardProps> = ({
             onClick={() => {
               onEdit();
             }}
-            className=" hover:text-primary cursor-pointer hover:bg-primary/25 p-1 w-fit h-fit rounded-md"
+            className="update-btn hover:text-primary cursor-pointer hover:bg-primary/25 p-1 w-fit h-fit rounded-md"
           />
         )}
         <a href={link} target="_blank">
