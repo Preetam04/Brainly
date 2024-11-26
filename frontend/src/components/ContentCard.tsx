@@ -7,7 +7,8 @@ import {
   Twitter,
   Youtube,
 } from "lucide-react";
-import React from "react";
+import React, { useState } from "react";
+import { getYTData } from "../integration/ytIntegration";
 
 export interface CardProps {
   contentType: "tweet" | "document" | "youtube" | "link";
@@ -39,13 +40,26 @@ const ContentCard: React.FC<CardProps> = ({
     link: <Link2 size={20} className="text-gray-800" />,
   };
 
+  const [contentDetails, setContentDetails] = useState<Promise<any>>();
+
   const dataToday = new Date(time);
 
   const token = localStorage.getItem("brainly-token");
   const authenticated = token && token.length !== 0;
 
   return (
-    <div className="w-full ring-1 ring-gray-300  p-4 rounded-md shadow relative h-fit ">
+    <div
+      className="w-full ring-1 ring-gray-300  p-4 rounded-md shadow relative h-fit "
+      onClick={() => {
+        if (contentType !== "youtube") return;
+        const urlParams = new URLSearchParams(new URL(link).search);
+        const videoId = urlParams.get("v");
+
+        console.log(videoId);
+        if (!videoId) return null;
+        setContentDetails(() => getYTData(videoId));
+      }}
+    >
       <div className="text-gray-500 flex items-center gap-3 absolute right-4 bottom-4">
         {authenticated && (
           <Edit
