@@ -12,10 +12,11 @@ import HomeLayout from "./layouts/HomeLayout";
 import AuthLayout from "./layouts/AuthLayout";
 import LandingPage from "./pages/LandingPage";
 import BaseLayout from "./layouts/BaseLayout";
+import Errorpage from "./pages/Errorpage";
 
 const routes = createBrowserRouter(
   createRoutesFromElements(
-    <Route path="/" element={<BaseLayout />}>
+    <Route path="/" element={<BaseLayout />} errorElement={<Errorpage />}>
       <Route element={<PrivateRoutes />}>
         <Route element={<HomeLayout />} path="u">
           <Route path="" element={<Home />} />
