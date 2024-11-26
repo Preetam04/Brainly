@@ -51,13 +51,12 @@ const ContentCard: React.FC<CardProps> = ({
     <div
       className="w-full ring-1 ring-gray-300  p-4 rounded-md shadow relative h-fit "
       onClick={() => {
-        if (contentType !== "youtube") return;
-        const urlParams = new URLSearchParams(new URL(link).search);
-        const videoId = urlParams.get("v");
-
-        console.log(videoId);
-        if (!videoId) return null;
-        setContentDetails(() => getYTData(videoId));
+        // if (contentType !== "youtube") return;
+        // const urlParams = new URLSearchParams(new URL(link).search);
+        // const videoId = urlParams.get("v");
+        // console.log(videoId);
+        // if (!videoId) return null;
+        // setContentDetails(() => getYTData(videoId));
       }}
     >
       <div className="text-gray-500 flex items-center gap-3 absolute right-4 bottom-4">
@@ -93,10 +92,10 @@ const ContentCard: React.FC<CardProps> = ({
         </h3>
       </div>
       <div className="text-sm mt-2.5 font-medium px-2">
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Impedit dolor
+        {/* Lorem ipsum dolor sit amet consectetur adipisicing elit. Impedit dolor
         laudantium distinctio, aliquam vel, modi adipisci aliquid debitis sint
         fuga est nihil? Molestias vel perferendis sapiente fugiat dolore
-        assumenda. In.
+        assumenda. In. */}
       </div>
 
       <div className="flex gap-2 mt-4">
