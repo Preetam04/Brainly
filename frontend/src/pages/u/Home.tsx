@@ -72,30 +72,6 @@ const Home = () => {
     return await getUserData();
   }, render);
 
-  useEffect(() => {}, [render]);
-
-  // useOutsideClick(
-  //   sharedModalRef,
-  //   () => {
-  //     setShareCardOpen(false);
-  //   },
-  //   "shared-btn"
-  // );
-  // useOutsideClick(
-  //   addModalRef,
-  //   () => {
-  //     setAddContentTabVisible(false);
-  //   },
-  //   "add-btn"
-  // );
-  // useOutsideClick(
-  //   updateModalRef,
-  //   () => {
-  //     setUpdateCardData(null);
-  //   },
-  //   "update-btn"
-  // );
-
   useOutsideClick(
     modalRef,
     () => {
@@ -199,6 +175,7 @@ const Home = () => {
                       contentType={ele.contentType}
                       title={ele?.title}
                       link={ele.link}
+                      data={ele?.data}
                       tags={ele.tags}
                       userId={ele.userId}
                       onDelete={onDelete}

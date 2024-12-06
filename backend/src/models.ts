@@ -67,6 +67,7 @@ export interface IContentSchema extends Document {
   title: string;
   tags: ITagSchema[];
   userId: IUserSchema;
+  data: string;
 }
 
 const contentTypes = ["tweet", "document", "youtube", "link"];
@@ -85,6 +86,9 @@ const contentSchema = new Schema<IContentSchema>(
     title: {
       type: String,
       required: true,
+    },
+    data: {
+      type: String,
     },
     userId: {
       type: Schema.Types.ObjectId,

@@ -69,6 +69,7 @@ const SharedBrain = () => {
                     title={ele?.title}
                     link={ele.link}
                     tags={ele.tags}
+                    data={ele?.data}
                     userId={ele.userId}
                     onDelete={onDelete}
                     time={ele?.createdAt}

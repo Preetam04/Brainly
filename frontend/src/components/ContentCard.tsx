@@ -7,8 +7,7 @@ import {
   Twitter,
   Youtube,
 } from "lucide-react";
-import React, { useState } from "react";
-import { getYTData } from "../integration/ytIntegration";
+import React, { useEffect, useState } from "react";
 
 export interface CardProps {
   contentType: "tweet" | "document" | "youtube" | "link";
@@ -20,11 +19,13 @@ export interface CardProps {
   onDelete?: (_id: string) => void;
   time: string;
   onEdit?: () => void;
+  data?: JSON | any;
 }
 
 const ContentCard: React.FC<CardProps> = ({
   contentType,
   link,
+  data,
   id,
   tags,
   title,
@@ -42,22 +43,26 @@ const ContentCard: React.FC<CardProps> = ({
 
   const [contentDetails, setContentDetails] = useState<Promise<any>>();
 
+  const [contentData, setContentData] = useState({});
+
   const dataToday = new Date(time);
 
   const token = localStorage.getItem("brainly-token");
   const authenticated = token && token.length !== 0;
 
+  useEffect(() => {
+    if (contentType === "youtube") {
+      let temp = JSON.parse(data);
+      setContentData(temp);
+    }
+  }, []);
+
+  console.log(contentData);
+
   return (
     <div
       className="w-full ring-1 ring-gray-300  p-4 rounded-md shadow relative h-fit "
-      onClick={() => {
-        // if (contentType !== "youtube") return;
-        // const urlParams = new URLSearchParams(new URL(link).search);
-        // const videoId = urlParams.get("v");
-        // console.log(videoId);
-        // if (!videoId) return null;
-        // setContentDetails(() => getYTData(videoId));
-      }}
+      onClick={() => {}}
     >
       <div className="text-gray-500 flex items-center gap-3 absolute right-4 bottom-4">
         {authenticated && (
@@ -92,10 +97,22 @@ const ContentCard: React.FC<CardProps> = ({
         </h3>
       </div>
       <div className="text-sm mt-2.5 font-medium px-2">
-        {/* Lorem ipsum dolor sit amet consectetur adipisicing elit. Impedit dolor
-        laudantium distinctio, aliquam vel, modi adipisci aliquid debitis sint
-        fuga est nihil? Molestias vel perferendis sapiente fugiat dolore
-        assumenda. In. */}
+        {contentType === "youtube" ? (
+          <>
+            <img
+              src={contentData?.thumbnail?.url}
+              width={480}
+              height={360}
+              className="w-fit rounded-md"
+              alt={contentData?.title}
+            />
+            <h4 className="mt-2 text-base font-semibold">
+              {contentData?.title}
+            </h4>
+          </>
+        ) : (
+          "Lorem ipsum dolor sit amet consectetur adipisicing elit. Impedit dolor laudantium distinctio, aliquam vel, modi adipisci aliquid debitis sint fuga est nihil? Molestias vel perferendis sapiente fugiat dolore assumenda. In. "
+        )}
       </div>
 
       <div className="flex gap-2 mt-4">

@@ -3,6 +3,7 @@ import { Content, Link, Tag, User } from "./models";
 import mongoose, { Error, Schema } from "mongoose";
 import { contentValidationSchema, userValidationSchema } from "./lib";
 import crypto from "crypto";
+import { getYTData } from "./integration/ytIntegration";
 
 async function signUp(req: Request, res: Response): Promise<any> {
   const data = userValidationSchema.safeParse(req.body);
@@ -116,6 +117,13 @@ async function addContent(req: Request, res: Response): Promise<any> {
     const user = req.user;
 
     const { contentType, link, title, tags } = req.body;
+    let data;
+
+    if (contentType === "youtube") {
+      const ytData = await getYTData(link);
+
+      data = ytData;
+    }
 
     const newTags = await Promise.all(
       tags.map(async (ele: string) => {
@@ -135,6 +143,7 @@ async function addContent(req: Request, res: Response): Promise<any> {
       title,
       userId: user._id,
       tags: newTags.filter((ele) => ele !== null),
+      data: JSON.stringify(data),
     });
 
     if (!addedContent) {
