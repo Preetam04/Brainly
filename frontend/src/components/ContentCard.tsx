@@ -57,8 +57,6 @@ const ContentCard: React.FC<CardProps> = ({
     }
   }, []);
 
-  console.log(contentData);
-
   return (
     <div
       className="w-full ring-1 ring-gray-300  p-4 rounded-md shadow relative h-fit "

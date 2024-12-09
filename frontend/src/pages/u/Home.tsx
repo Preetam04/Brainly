@@ -112,6 +112,7 @@ const Home = () => {
       console.log(error);
     }
   };
+  console.log(updateCardData);
 
   return (
     <>

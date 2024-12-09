@@ -117,13 +117,6 @@ async function addContent(req: Request, res: Response): Promise<any> {
     const user = req.user;
 
     const { contentType, link, title, tags } = req.body;
-    let data;
-
-    if (contentType === "youtube") {
-      const ytData = await getYTData(link);
-
-      data = ytData;
-    }
 
     const newTags = await Promise.all(
       tags.map(async (ele: string) => {
@@ -143,7 +136,6 @@ async function addContent(req: Request, res: Response): Promise<any> {
       title,
       userId: user._id,
       tags: newTags.filter((ele) => ele !== null),
-      data: JSON.stringify(data),
     });
 
     if (!addedContent) {
@@ -225,7 +217,7 @@ async function updateContent(req: Request, res: Response): Promise<any> {
 
     return res.status(200).json({
       message: "Content updated successfully",
-      updateContent,
+      updatedContent,
       status: 200,
     });
   } catch (error) {

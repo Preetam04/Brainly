@@ -2,6 +2,7 @@ import mongoose, { Schema, Document, Types, Error } from "mongoose";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { any, string } from "zod";
+import { getYTData } from "./integration/ytIntegration";
 
 interface IUserSchema extends Document {
   username: string;
@@ -119,6 +120,30 @@ contentSchema.pre("save", async function (next) {
   if (!user) {
     throw new Error("User doesn't exists");
   }
+  next();
+});
+
+contentSchema.pre("save", async function () {
+  console.log(this.isModified("link"));
+
+  if (!this.isModified("link") || this.contentType !== "youtube") return;
+
+  const ytData = await getYTData(this.link);
+
+  this.data = JSON.stringify(ytData);
+  console.log(this.data);
+});
+
+contentSchema.pre("findOneAndUpdate", async function (next) {
+  const update = this.getUpdate();
+  // @ts-ignore
+  if (update.contentType === "youtube" && update.link) {
+    // @ts-ignore
+    const ytData = await getYTData(update.link);
+    // @ts-ignore
+    update.data = JSON.stringify(ytData);
+  }
+
   next();
 });
 

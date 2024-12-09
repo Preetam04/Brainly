@@ -34,7 +34,7 @@ app.patch("/api/v1/content/:contentId", verifyJWT, updateContent);
 app.get("/api/v1/brain/share", verifyJWT, createLink);
 app.post("/api/v1/brain/share", fetchLink);
 
-app.listen(process.env.PORT, async () => {
+app.listen(process.env.PORT || 8000, async () => {
   try {
     await connectDB();
 
