@@ -1,4 +1,3 @@
-import { ContentForm } from "../components/AddContentCard";
 import axios from "./axios";
 
 const token = localStorage.getItem("brainly-token");
@@ -29,7 +28,7 @@ async function getSharingLink() {
   });
 }
 
-async function addContent(data) {
+async function addContent(data: any) {
   return await axios.post(`/content`, data, {
     headers: {
       authorization: token,
@@ -37,7 +36,7 @@ async function addContent(data) {
   });
 }
 
-async function updateContentData(id, data) {
+async function updateContentData(id: string, data: any) {
   return await axios.patch(`/content/${id}`, data, {
     headers: {
       authorization: token,
@@ -53,10 +52,10 @@ async function getAllSharedData(hash: string) {
 }
 
 export {
-  getUserData,
-  deleteContent,
-  getSharingLink,
-  getAllSharedData,
-  updateContentData,
   addContent,
+  deleteContent,
+  getAllSharedData,
+  getSharingLink,
+  getUserData,
+  updateContentData,
 };

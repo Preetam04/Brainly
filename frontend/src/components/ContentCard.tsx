@@ -29,7 +29,7 @@ const ContentCard: React.FC<CardProps> = ({
   id,
   tags,
   title,
-  userId,
+  // userId,
   onDelete,
   time,
   onEdit,
@@ -41,7 +41,7 @@ const ContentCard: React.FC<CardProps> = ({
     link: <Link2 size={20} className="text-gray-800" />,
   };
 
-  const [contentDetails, setContentDetails] = useState<Promise<any>>();
+  // const [contentDetails, setContentDetails] = useState<Promise<any>>();
 
   const [contentData, setContentData] = useState({});
 
@@ -67,6 +67,7 @@ const ContentCard: React.FC<CardProps> = ({
           <Edit
             size={16}
             onClick={() => {
+              // @ts-ignore
               onEdit();
             }}
             className="update-btn hover:text-primary cursor-pointer hover:bg-primary/25 p-1 w-fit h-fit rounded-md"
@@ -82,6 +83,8 @@ const ContentCard: React.FC<CardProps> = ({
           <Trash2
             size={16}
             onClick={() => {
+              // @ts-ignore
+
               onDelete(id);
             }}
             className="hover:text-red-700 cursor-pointer hover:bg-red-700/25 p-1 w-fit h-fit rounded-md"
@@ -98,14 +101,21 @@ const ContentCard: React.FC<CardProps> = ({
         {contentType === "youtube" ? (
           <>
             <img
+              // @ts-ignore
+
               src={contentData?.thumbnail?.url}
               width={480}
               height={360}
               className="w-fit rounded-md"
+              // @ts-ignore
+
               alt={contentData?.title}
             />
             <h4 className="mt-2 text-base font-semibold">
-              {contentData?.title}
+              {
+                // @ts-ignore
+                contentData?.title
+              }
             </h4>
           </>
         ) : (
@@ -119,7 +129,11 @@ const ContentCard: React.FC<CardProps> = ({
             key={key}
             className="text-xs text-primary bg-primary/25 p-1 rounded-md px-2 font-medium lowercase"
           >
-            #{tag["tag"]?.split(" ").join("-")}
+            #
+            {
+              // @ts-ignore
+              tag["tag"]?.split(" ").join("-")
+            }
           </div>
         ))}
       </div>

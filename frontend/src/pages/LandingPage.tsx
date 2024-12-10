@@ -1,11 +1,4 @@
-import {
-  BookOpen,
-  Brain,
-  CheckCircle,
-  FileText,
-  Twitter,
-  Youtube,
-} from "lucide-react";
+import { BookOpen, Brain, CheckCircle, FileText } from "lucide-react";
 import { Link } from "react-router-dom";
 import Button from "../components/Button";
 import Logo from "../components/Logo";

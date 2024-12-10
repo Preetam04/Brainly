@@ -1,17 +1,24 @@
 import { useEffect } from "react";
 
-const useOutsideClick = (ref, onOutsideClick, excludeClassesOrIds = []) => {
+const useOutsideClick = (
+  ref: React.RefObject<HTMLInputElement>,
+  onOutsideClick: () => any,
+  excludeClassesOrIds = []
+) => {
   useEffect(() => {
-    const handleOutsideClick = (event) => {
+    const handleOutsideClick = (event: MouseEvent) => {
       const shouldExclude = excludeClassesOrIds.some((exclude) => {
         return (
+          // @ts-ignore
           event.target.id === exclude ||
+          // @ts-ignore
           event.target.classList.contains(exclude)
         );
       });
 
       if (shouldExclude) return;
 
+      // @ts-ignore
       if (ref.current && !ref.current.contains(event.target)) {
         onOutsideClick();
       }

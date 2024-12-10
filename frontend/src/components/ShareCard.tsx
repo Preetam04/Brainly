@@ -1,10 +1,10 @@
-import React, { useState } from "react";
-import Button from "./Button";
 import { Copy, Link, X } from "lucide-react";
-import { getSharingLink } from "../services/userServices";
+import { useState } from "react";
 import { toast } from "react-toastify";
+import { getSharingLink } from "../services/userServices";
+import Button from "./Button";
 
-const ShareCard = ({ setFunc }) => {
+const ShareCard = ({ setFunc }: { setFunc: any }) => {
   const [linkAvailable, setLinkAvailable] = useState<boolean>(false);
   const [loading, setLoading] = useState(false);
   const [link, setLink] = useState<string>("");

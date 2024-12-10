@@ -1,14 +1,21 @@
-import React, { useState } from "react";
-import { contentValidationSchema } from "../lib";
-import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import Button from "./Button";
-import InputField from "./inputfied";
-import { ContentForm } from "./AddContentCard";
 import { X } from "lucide-react";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { contentValidationSchema } from "../lib";
+import { ContentForm } from "./AddContentCard";
+import Button from "./Button";
+import InputField from "./Inputfied";
 
-const UpdateCard = ({ setFunc, data, onUpdate }) => {
+const UpdateCard = ({
+  setFunc,
+  data,
+  onUpdate,
+}: {
+  setFunc: any;
+  data: any;
+  onUpdate: any;
+}) => {
   const {
     register,
     handleSubmit,
@@ -19,9 +26,11 @@ const UpdateCard = ({ setFunc, data, onUpdate }) => {
       title: data["title"],
       link: data["link"],
       contentType: data["contentType"], // Set the default selected value
+      // @ts-ignore
       tags: data["tags"].map((ele) => ele.tag).join(", "),
     },
   });
+  // @ts-ignore
 
   const [loading, setLoading] = useState<boolean>(false);
   const onSubmit = async (values: ContentForm) => {

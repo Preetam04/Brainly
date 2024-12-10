@@ -1,8 +1,6 @@
-import React from "react";
-import Button from "../components/Button";
-import Logo from "../components/Logo";
-import { ArrowLeft, ArrowRight, Brain } from "lucide-react";
+import { ArrowLeft, Brain } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import Button from "../components/Button";
 
 const Errorpage = () => {
   const navigate = useNavigate();

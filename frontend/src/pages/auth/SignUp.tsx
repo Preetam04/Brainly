@@ -1,14 +1,14 @@
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 import { z } from "zod";
 import Button from "../../components/Button";
-import InputField from "../../components/inputfied";
+import InputField from "../../components/Inputfied";
 import Logo from "../../components/Logo";
 import { userSchema } from "../../lib";
 import { signUp } from "../../services/authServices";
-import { useState } from "react";
-import { toast } from "react-toastify";
 
 type UserForm = z.infer<typeof userSchema>;
 
@@ -35,6 +35,7 @@ const SignUp = () => {
       console.log(error);
 
       toast.error(
+        // @ts-ignore
         error?.response?.data?.message || "Error occured while siging up"
       );
     } finally {

@@ -23,13 +23,13 @@ const InputField: React.FC<FormFieldProps> = ({
 }) => {
   const [showPassword, setShowPassword] = useState(false);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    const arrayValue = value.split(",").map((tag) => tag.trim()); // Split and trim tags
-    register(name).onChange({
-      target: { name, value: arrayValue }, // Pass array to React Hook Form
-    });
-  };
+  // const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   const value = e.target.value;
+  //   const arrayValue = value.split(",").map((tag) => tag.trim()); // Split and trim tags
+  //   register(name).onChange({
+  //     target: { name, value: arrayValue }, // Pass array to React Hook Form
+  //   });
+  // };
 
   return (
     <div>

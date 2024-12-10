@@ -1,18 +1,23 @@
+import { zodResolver } from "@hookform/resolvers/zod";
 import { X } from "lucide-react";
-import Button from "./Button";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { toast } from "react-toastify";
 import { z } from "zod";
 import { contentValidationSchema } from "../lib";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import InputField from "./inputfied";
-import { useState } from "react";
-import { toast } from "react-toastify";
-import axios from "../services/axios";
 import { addContent } from "../services/userServices";
+import Button from "./Button";
+import InputField from "./Inputfied";
 
 export type ContentForm = z.infer<typeof contentValidationSchema>;
 
-const AddContentCard = ({ setFunc, setRender }) => {
+const AddContentCard = ({
+  setFunc,
+  setRender,
+}: {
+  setFunc: any;
+  setRender: any;
+}) => {
   const {
     register,
     handleSubmit,
@@ -31,11 +36,13 @@ const AddContentCard = ({ setFunc, setRender }) => {
     // console.log({ ...values, tags: values.tags?.split(", ") || [] });
 
     try {
-      const response = await addContent({
+      await addContent({
         ...values,
         tags: values.tags?.split(", ") || [],
       });
+      // @ts-ignore
       setFunc((prev) => !prev);
+      // @ts-ignore
       setRender((prev) => !prev);
       // console.log(response.data);
       toast.success("Content added successfully");

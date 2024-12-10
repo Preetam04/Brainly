@@ -1,9 +1,9 @@
 import { Brain, LoaderCircle, Plus, Share2 } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { toast } from "react-toastify";
 import AddContentCard, { ContentForm } from "../../components/AddContentCard";
 import Button from "../../components/Button";
-import ContentCard, { CardProps } from "../../components/ContentCard";
+import ContentCard from "../../components/ContentCard";
 import Navbar from "../../components/Navbar";
 import ShareCard from "../../components/ShareCard";
 import SliderBar from "../../components/SliderBar";
@@ -15,44 +15,6 @@ import {
   getUserData,
   updateContentData,
 } from "../../services/userServices";
-
-const dummyData: CardProps[] = [
-  {
-    contentType: "tweet",
-    link: "https://twitter.com/elonmusk/status/1234567890",
-    title: "Elon Musk on AI Innovation",
-    tags: ["AI", "Technology"],
-    userId: "user_001",
-  },
-  {
-    contentType: "document",
-    link: "https://example.com/documents/blockchain-introduction.pdf",
-    title: "Introduction to Blockchain",
-    tags: ["Blockchain", "Crypto"],
-    userId: "user_002",
-  },
-  {
-    contentType: "youtube",
-    link: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
-    title: "Understanding Quantum Computing",
-    tags: ["Quantum Computing", "Physics"],
-    userId: "user_003",
-  },
-  {
-    contentType: "link",
-    link: "https://dev.to/blog/10-tips-for-junior-developers",
-    title: "10 Tips for Junior Developers",
-    tags: ["Development", "Programming"],
-    userId: "user_004",
-  },
-  {
-    contentType: "document",
-    link: "https://example.com/docs/design-principles.pdf",
-    title: "Principles of Modern Design",
-    tags: ["Design", "UI/UX"],
-    userId: "user_005",
-  },
-];
 
 const Home = () => {
   const [addContentTabVisible, setAddContentTabVisible] =
@@ -67,7 +29,7 @@ const Home = () => {
   // const addModalRef = useRef(null);
 
   const [render, setRender] = useState(false);
-
+  // @ts-ignore
   const { data, error, loading } = useFetch(async () => {
     return await getUserData();
   }, render);
@@ -83,6 +45,7 @@ const Home = () => {
         setUpdateCardData(null);
       }
     },
+    // @ts-ignore
     ["shared-btn", "add-btn", "update-btn"]
   );
 
@@ -90,7 +53,7 @@ const Home = () => {
 
   const onDelete = async (id: string) => {
     try {
-      const response = await deleteContent(id);
+      await deleteContent(id);
       // console.log(response.data.message);
       setRender((prev) => !prev);
       toast.success("Content removed successfully");
@@ -104,6 +67,7 @@ const Home = () => {
     // console.log(data);
 
     try {
+      // @ts-ignore
       const response = await updateContentData(data._id, data);
       // console.log(response.data);
       setUpdateCardData(null);
@@ -160,39 +124,44 @@ const Home = () => {
         )}
         {!loading && (
           <div className="container px-5">
-            {!loading && data?.length !== 0 ? (
-              <div className=" grid grid-cols-1  sm:grid-cols-2 lg:grid-cols-3 gap-8 mt-10 mb-20">
-                {data
-                  ?.filter((ele) => {
-                    if (filter === "all") {
-                      return ele;
-                    }
-                    return ele.contentType === filter;
-                  })
-                  .map((ele, key) => (
-                    <ContentCard
-                      key={ele._id}
-                      id={ele._id}
-                      contentType={ele.contentType}
-                      title={ele?.title}
-                      link={ele.link}
-                      data={ele?.data}
-                      tags={ele.tags}
-                      userId={ele.userId}
-                      onDelete={onDelete}
-                      onEdit={() => {
-                        setUpdateCardData(ele);
-                      }}
-                      time={ele?.createdAt}
-                    />
-                  ))}
-              </div>
-            ) : (
-              <div className=" text-center mt-16 text-2xl font-semibold flex items-center flex-col gap-5">
-                <Brain size={56} className="text-primary" />
-                <p>Please Add data to your second brain</p>
-              </div>
-            )}
+            {
+              // @ts-ignore
+              !loading && data?.length !== 0 ? (
+                <div className=" grid grid-cols-1  sm:grid-cols-2 lg:grid-cols-3 gap-8 mt-10 mb-20">
+                  {data
+                    // @ts-ignore
+                    ?.filter((ele) => {
+                      if (filter === "all") {
+                        return ele;
+                      }
+                      return ele.contentType === filter;
+                    })
+                    // @ts-ignore
+                    .map((ele, key) => (
+                      <ContentCard
+                        key={ele._id}
+                        id={ele._id}
+                        contentType={ele.contentType}
+                        title={ele?.title}
+                        link={ele.link}
+                        data={ele?.data}
+                        tags={ele.tags}
+                        userId={ele.userId}
+                        onDelete={onDelete}
+                        onEdit={() => {
+                          setUpdateCardData(ele);
+                        }}
+                        time={ele?.createdAt}
+                      />
+                    ))}
+                </div>
+              ) : (
+                <div className=" text-center mt-16 text-2xl font-semibold flex items-center flex-col gap-5">
+                  <Brain size={56} className="text-primary" />
+                  <p>Please Add data to your second brain</p>
+                </div>
+              )
+            }
           </div>
         )}
       </div>
