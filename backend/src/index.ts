@@ -19,7 +19,13 @@ dotenv.config({ path: "./.env" });
 const app = express();
 
 app.use(express.json());
-app.use(cors({ origin: process.env.CORS_ORIGIN }));
+app.use(
+  cors({
+    origin: process.env.CORS_ORIGIN,
+    methods: ["GET", "POST", "PUT", "DELETE"], // Specify allowed HTTP methods
+    credentials: true,
+  })
+);
 
 // auth
 app.post("/api/v1/sign-up", signUp);
